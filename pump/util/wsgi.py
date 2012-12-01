@@ -85,7 +85,7 @@ def build_wsgi_response(response_map, start_response):
   response = set_body(response, response_map["body"])
 
   start_response(response["status"], response["headers"])
-  return response["body"]
+  return [response["body"]]
 
 def get_headers(request):
   return dict([(k.replace('HTTP_', '').lower(), v) for k, v in request.items()
