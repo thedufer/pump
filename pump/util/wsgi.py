@@ -131,6 +131,7 @@ def set_body(response, body):
     response["body"] = ''.join(body)
   elif isinstance(body, file):
     response["body"] = body.read()
+    body.close()
   elif not body:
     response["body"] = ""
   else:
