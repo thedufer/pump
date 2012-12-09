@@ -1,15 +1,15 @@
 # A middleware for parsing GET and POST params.
 
-import re
+import re, json
 from pump.util import codec
 
 # Middleware to parse GET and POST params.  Adds the following keys to the
 # request:
-# 
+#
 #   - get_params
 #   - post_params
 #   - params
-# 
+#
 # You can specify an encoding to decode the URL-encoded params with.  If not
 # specified, uses the character encoding specified in the request, or UTF-8 by
 # default.
@@ -39,6 +39,8 @@ def parse_get_params(request, encoding):
 def parse_post_params(request, encoding):
   if _does_have_urlencoded_form(request) and request.get("body"):
     params = parse_params(request["body"].read(), encoding)
+  elif _does_have_json(request) and request.get("body"):
+    params = json.load(request["body"], encoding)
   else:
     params = {}
 
@@ -72,6 +74,10 @@ def set_param(params, key, val):
 def _does_have_urlencoded_form(request):
   return request.get('content_type', '').startswith(
     'application/x-www-form-urlencoded')
+
+def _does_have_json(request):
+  return request.get('content_type', '').startswith(
+    'application/json')
 
 # Merge two dicts recursively.
 def _recursive_merge(x, y):
